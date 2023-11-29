@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using UsuariosAPI.Data.Dtos;
+using UsuariosAPI.Models;
 
 namespace UsuariosAPI.Controllers
 {
@@ -7,10 +10,26 @@ namespace UsuariosAPI.Controllers
     [Route("[Controller]")]
     public class UsuarioController : ControllerBase
     {
-        [HttpPost]
-        public IActionResult CadastraUsuario(CreateUsuarioDto dto)
+        private IMapper _mapper;
+        private UserManager<Usuario> _userManager;
+
+        public UsuarioController(IMapper mapper, UserManager<Usuario> userManager)
         {
-            throw new NotImplementedException();
+            _mapper = mapper;
+            _userManager = userManager;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CadastraUsuario(CreateUsuarioDto dto)
+        {
+            Usuario usuario = _mapper.Map<Usuario>
+                (dto);
+
+            IdentityResult resultado = await _userManager.CreateAsync(usuario, dto.Password);
+
+            if (resultado.Succeeded) return Ok("Usuario cadastrado!");
+
+            throw new ApplicationException("Falha ao cadastrar usuário!");
         }
     }
 }
