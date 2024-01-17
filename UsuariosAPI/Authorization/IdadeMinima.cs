@@ -6,7 +6,7 @@ namespace UsuariosAPI.Authorization
     {
         public IdadeMinima(int idade)
         {
-            idade = idade;
+            Idade = idade;
         }
 
         public int Idade { get; set; }
